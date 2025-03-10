@@ -28,6 +28,10 @@ if(USE_ASAN)
     set_source_files_properties(../../Utilities/Thread.cpp PROPERTIES COMPILE_DEFINITIONS USE_ASAN)
 endif()
 
+if(HAS_MEMORY_BREAKPOINTS)
+    target_compile_definitions(rpcs3_emu PRIVATE RPCS3_HAS_MEMORY_BREAKPOINTS)
+endif()
+
 target_link_libraries(rpcs3_emu
     PRIVATE
         3rdparty::zlib 3rdparty::yaml-cpp 3rdparty::zstd
@@ -42,7 +46,14 @@ target_link_libraries(rpcs3_emu
 # For stdafx.h
 target_include_directories(rpcs3_emu
     PUBLIC
-        ${PROJECT_SOURCE_DIR}/rpcs3)
+        ${CMAKE_CURRENT_SOURCE_DIR}/../..
+        ${CMAKE_CURRENT_SOURCE_DIR}/..
+)
+
+target_include_directories(rpcs3_emu
+    PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/../../3rdparty
+)
 
 # Utilities
 target_sources(rpcs3_emu PRIVATE
@@ -139,8 +150,8 @@ target_sources(rpcs3_emu PRIVATE
 )
 
 if(USE_FAUDIO)
-    find_package(SDL2)
-    if(SDL2_FOUND AND SDL2_VERSION VERSION_GREATER_EQUAL 2.0.9)
+    find_package(SDL3)
+    if(SDL3_FOUND AND SDL3_VERSION VERSION_GREATER_EQUAL 3.2.0)
         target_sources(rpcs3_emu PRIVATE
             Audio/FAudio/FAudioBackend.cpp
             Audio/FAudio/faudio_enumerator.cpp
@@ -490,34 +501,6 @@ target_sources(rpcs3_emu PRIVATE
     RSX/Core/RSXDrawCommands.cpp
     RSX/gcm_enums.cpp
     RSX/gcm_printing.cpp
-    RSX/GL/GLCommonDecompiler.cpp
-    RSX/GL/GLCompute.cpp
-    RSX/GL/GLDMA.cpp
-    RSX/GL/GLDraw.cpp
-    RSX/GL/GLFragmentProgram.cpp
-    RSX/GL/GLGSRender.cpp
-    RSX/GL/GLHelpers.cpp
-    RSX/GL/GLOverlays.cpp
-    RSX/GL/GLPipelineCompiler.cpp
-    RSX/GL/GLPresent.cpp
-    RSX/GL/GLRenderTargets.cpp
-    RSX/GL/GLResolveHelper.cpp
-    RSX/GL/GLShaderInterpreter.cpp
-    RSX/GL/GLTexture.cpp
-    RSX/GL/GLTextureCache.cpp
-    RSX/GL/glutils/blitter.cpp
-    RSX/GL/glutils/buffer_object.cpp
-    RSX/GL/glutils/capabilities.cpp
-    RSX/GL/glutils/common.cpp
-    RSX/GL/glutils/fbo.cpp
-    RSX/GL/glutils/image.cpp
-    RSX/GL/glutils/program.cpp
-    RSX/GL/glutils/ring_buffer.cpp
-    RSX/GL/glutils/sampler.cpp
-    RSX/GL/GLVertexBuffers.cpp
-    RSX/GL/GLVertexProgram.cpp
-    RSX/GL/OpenGL.cpp
-    RSX/GL/upscalers/fsr1/fsr_pass.cpp
     RSX/GSRender.cpp
     RSX/Host/MM.cpp
     RSX/Host/RSXDMAWriter.cpp
@@ -586,6 +569,39 @@ target_sources(rpcs3_emu PRIVATE
     RSX/rsx_vertex_data.cpp
 )
 
+if(NOT ANDROID)
+    target_sources(rpcs3_emu PRIVATE
+        RSX/GL/GLCommonDecompiler.cpp
+        RSX/GL/GLCompute.cpp
+        RSX/GL/GLDMA.cpp
+        RSX/GL/GLDraw.cpp
+        RSX/GL/GLFragmentProgram.cpp
+        RSX/GL/GLGSRender.cpp
+        RSX/GL/GLHelpers.cpp
+        RSX/GL/GLOverlays.cpp
+        RSX/GL/GLPipelineCompiler.cpp
+        RSX/GL/GLPresent.cpp
+        RSX/GL/GLRenderTargets.cpp
+        RSX/GL/GLResolveHelper.cpp
+        RSX/GL/GLShaderInterpreter.cpp
+        RSX/GL/GLTexture.cpp
+        RSX/GL/GLTextureCache.cpp
+        RSX/GL/glutils/blitter.cpp
+        RSX/GL/glutils/buffer_object.cpp
+        RSX/GL/glutils/capabilities.cpp
+        RSX/GL/glutils/common.cpp
+        RSX/GL/glutils/fbo.cpp
+        RSX/GL/glutils/image.cpp
+        RSX/GL/glutils/program.cpp
+        RSX/GL/glutils/ring_buffer.cpp
+        RSX/GL/glutils/sampler.cpp
+        RSX/GL/GLVertexBuffers.cpp
+        RSX/GL/GLVertexProgram.cpp
+        RSX/GL/OpenGL.cpp
+        RSX/GL/upscalers/fsr1/fsr_pass.cpp
+    )
+endif()
+
 if(TARGET 3rdparty_vulkan)
     target_sources(rpcs3_emu PRIVATE
         RSX/VK/upscalers/fsr1/fsr_pass.cpp
@@ -597,8 +613,10 @@ if(TARGET 3rdparty_vulkan)
         RSX/VK/vkutils/descriptors.cpp
         RSX/VK/vkutils/image.cpp
         RSX/VK/vkutils/image_helpers.cpp
+        RSX/VK/vkutils/instance.cpp
         RSX/VK/vkutils/scratch.cpp
         RSX/VK/vkutils/sync.cpp
+        RSX/VK/vkutils/swapchain.cpp
         RSX/VK/vkutils/memory.cpp
         RSX/VK/vkutils/device.cpp
         RSX/VK/vkutils/sampler.cpp
@@ -635,7 +653,7 @@ endif()
 
 target_link_libraries(rpcs3_emu
     PUBLIC
-        3rdparty::ffmpeg 3rdparty::sdl2
+        3rdparty::ffmpeg 3rdparty::sdl3
         3rdparty::opengl 3rdparty::stblib
         3rdparty::vulkan 3rdparty::glew
         3rdparty::libusb 3rdparty::wolfssl
@@ -652,7 +670,7 @@ endif()
 
 
 if(USE_PRECOMPILED_HEADERS)
-    target_precompile_headers(rpcs3_emu PRIVATE "${PROJECT_SOURCE_DIR}/rpcs3/stdafx.h")
+    target_precompile_headers(rpcs3_emu PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/../stdafx.h")
 endif()
 
 if(WAYLAND_FOUND)
