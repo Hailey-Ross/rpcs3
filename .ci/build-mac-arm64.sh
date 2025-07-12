@@ -32,7 +32,7 @@ if [ ! -d "/tmp/Qt/$QT_VER" ]; then
   git clone https://github.com/engnr/qt-downloader.git
   cd qt-downloader
   git checkout f52efee0f18668c6d6de2dec0234b8c4bc54c597
-  # nested Qt 6.9.0 URL workaround
+  # nested Qt 6.9.1 URL workaround
   # sed -i '' "s/'qt{0}_{0}{1}{2}'.format(major, minor, patch)]))/'qt{0}_{0}{1}{2}'.format(major, minor, patch), 'qt{0}_{0}{1}{2}'.format(major, minor, patch)]))/g" qt-downloader
   # sed -i '' "s/'{}\/{}\/qt{}_{}\/'/'{0}\/{1}\/qt{2}_{3}\/qt{2}_{3}\/'/g" qt-downloader
   # archived Qt 6.7.3 URL workaround
@@ -41,7 +41,7 @@ if [ ! -d "/tmp/Qt/$QT_VER" ]; then
   arch -arm64 "$BREW_PATH/bin/pipenv" run pip3 uninstall py7zr requests semantic_version lxml
   arch -arm64 "$BREW_PATH/bin/pipenv" run pip3 install py7zr requests semantic_version lxml  --no-cache
   mkdir -p "$QT_VER/macos" ; ln -s "macos" "$QT_VER/clang_64"
-  # sed -i '' 's/args\.version \/ derive_toolchain_dir(args) \/ //g' "$WORKDIR/qt-downloader/qt-downloader" # Qt 6.9.0 workaround
+  # sed -i '' 's/args\.version \/ derive_toolchain_dir(args) \/ //g' "$WORKDIR/qt-downloader/qt-downloader" # Qt 6.9.1 workaround
   arch -arm64 "$BREW_PATH/bin/pipenv" run "$WORKDIR/qt-downloader/qt-downloader" macos desktop "$QT_VER" clang_64 --opensource --addons qtmultimedia qtimageformats # -o "$QT_VER/clang_64"
 fi
 
@@ -67,7 +67,7 @@ export LLVM_DIR
 LLVM_DIR="$BREW_PATH/opt/llvm@$LLVM_COMPILER_VER"
 # exclude ffmpeg, LLVM, opencv, and sdl from submodule update
 # shellcheck disable=SC2046
-git submodule -q update --init --depth=1 --jobs=8 $(awk '/path/ && !/ffmpeg/ && !/llvm/ && !/opencv/ && !/SDL/ { print $3 }' .gitmodules)
+git submodule -q update --init --depth=1 --jobs=8 $(awk '/path/ && !/ffmpeg/ && !/llvm/ && !/opencv/ && !/SDL/ && !/feralinteractive/ { print $3 }' .gitmodules)
 
 # 3rdparty fixes
 sed -i '' "s/extern const double NSAppKitVersionNumber;/const double NSAppKitVersionNumber = 1343;/g" 3rdparty/hidapi/hidapi/mac/hid.c
@@ -115,9 +115,7 @@ export MACOSX_DEPLOYMENT_TARGET=14.0
 
 cd ..
 
-{   [ "$CI_HAS_ARTIFACTS" = "true" ];
-} && SHOULD_DEPLOY="true" || SHOULD_DEPLOY="false"
-
-if [ "$build_status" -eq 0 ] && [ "$SHOULD_DEPLOY" = "true" ]; then
+# If it compiled succesfully let's deploy.
+if [ "$build_status" -eq 0 ]; then
     .ci/deploy-mac-arm64.sh
 fi

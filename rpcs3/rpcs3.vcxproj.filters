@@ -1209,6 +1209,9 @@
     <ClCompile Include="rpcs3.cpp">
       <Filter>rpcs3</Filter>
     </ClCompile>
+    <ClCompile Include="gamemode_control.cpp">
+      <Filter>rpcs3</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Input\ds4_pad_handler.h">
@@ -1431,6 +1434,9 @@
       <Filter>Gui\utils</Filter>
     </ClInclude>
     <ClInclude Include="rpcs3.h">
+      <Filter>rpcs3</Filter>
+    </ClInclude>
+    <ClInclude Include="gamemode_control.h">
       <Filter>rpcs3</Filter>
     </ClInclude>
   </ItemGroup>
@@ -1806,9 +1812,6 @@
     <None Include="..\Utilities\git-version-gen.cmd">
       <Filter>Scripts</Filter>
     </None>
-    <None Include="..\.cirrus.yml">
-      <Filter>CI</Filter>
-    </None>
     <None Include="..\.ci\build-freebsd.sh">
       <Filter>CI</Filter>
     </None>
@@ -1816,6 +1819,9 @@
       <Filter>CI</Filter>
     </None>
     <None Include="..\.ci\build-mac.sh">
+      <Filter>CI</Filter>
+    </None>
+    <None Include="..\.ci\build-windows-clang.sh">
       <Filter>CI</Filter>
     </None>
     <None Include="..\.ci\deploy-linux.sh">
@@ -1827,9 +1833,6 @@
     <None Include="..\.ci\deploy-windows.sh">
       <Filter>CI</Filter>
     </None>
-    <None Include="..\.ci\export-cirrus-vars.sh">
-      <Filter>CI</Filter>
-    </None>
     <None Include="..\.ci\get_keys-windows.sh">
       <Filter>CI</Filter>
     </None>
@@ -1837,6 +1840,9 @@
       <Filter>CI</Filter>
     </None>
     <None Include="..\.ci\setup-windows.sh">
+      <Filter>CI</Filter>
+    </None>
+    <None Include="..\.ci\setup-windows-ci-vars.sh">
       <Filter>CI</Filter>
     </None>
     <None Include="..\.ci\install-freebsd.sh">
@@ -1897,6 +1903,21 @@
       <Filter>Darwin</Filter>
     </None>
     <None Include="..\.github\workflows\rpcs3.yml">
+      <Filter>CI</Filter>
+    </None>
+    <None Include="..\.ci\deploy-llvm.sh">
+      <Filter>CI</Filter>
+    </None>
+    <None Include="..\.ci\generate-qt-ts.sh">
+      <Filter>CI</Filter>
+    </None>
+    <None Include="..\.ci\setup-llvm.sh">
+      <Filter>CI</Filter>
+    </None>
+    <None Include="..\.github\workflows\llvm.yml">
+      <Filter>CI</Filter>
+    </None>
+    <None Include="..\.github\workflows\qt-ts.yml">
       <Filter>CI</Filter>
     </None>
   </ItemGroup>
